@@ -1,0 +1,13 @@
+{
+  "itemGroup.touhou_lost_maid": "Example Mod Tab",
+  "block.touhou_lost_maid.example_block": "Example Block",
+  "item.touhou_lost_maid.example_item": "Example Item",
+
+  "touhou_lost_maid.configuration.title": "Touhou LostMaid Configs",
+  "touhou_lost_maid.configuration.section.touhou_lost_maid.common.toml": "Touhou LostMaid Configs",
+  "touhou_lost_maid.configuration.section.touhou_lost_maid.common.toml.title": "Touhou LostMaid Configs",
+  "touhou_lost_maid.configuration.items": "Item List",
+  "touhou_lost_maid.configuration.logDirtBlock": "Log Dirt Block",
+  "touhou_lost_maid.configuration.magicNumberIntroduction": "Magic Number Text",
+  "touhou_lost_maid.configuration.magicNumber": "Magic Number"
+}
