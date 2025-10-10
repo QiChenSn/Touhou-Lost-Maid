@@ -3,13 +3,19 @@ package com.github.qichensn.task;
 import com.github.qichensn.TouhouLostMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.ILittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.LittleMaidExtension;
-import com.github.tartaricacid.touhoulittlemaid.api.task.IMaidTask;
+import com.github.tartaricacid.touhoulittlemaid.api.task.IAttackTask;
+import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.task.MaidUseShieldTask;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
+import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -21,8 +27,10 @@ public class AttackPlayerTask implements ILittleMaid {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(TouhouLostMaid.MODID,
             "attack_player");
 
-    class AttacjTask implements IMaidTask {
+    // 女仆追击距离
+    private static final float ATTACK_RADIUS=40.0f;
 
+    class AttackTask implements IAttackTask {
 
         @Override
         public ResourceLocation getUid() {
@@ -40,13 +48,55 @@ public class AttackPlayerTask implements ILittleMaid {
         }
 
         @Override
+        public boolean canAttack(EntityMaid maid, LivingEntity target) {
+            return target instanceof Player && !((Player) target).getAbilities().instabuild;
+        }
+
+        @Override
+        public boolean isWeapon(EntityMaid maid, ItemStack stack) {
+            return stack.getAttributeModifiers().modifiers()
+                    .stream()
+                    .anyMatch(modifier -> modifier.attribute().is(Attributes.ATTACK_DAMAGE));
+        }
+
+        @Override
         public List<Pair<Integer, BehaviorControl<? super EntityMaid>>> createBrainTasks(EntityMaid entityMaid) {
-            return List.of();
+
+            BehaviorControl<EntityMaid> supplementedTask = StartAttacking.create(this::hasAssaultWeapon,IAttackTask::findFirstValidAttackTarget );
+            BehaviorControl<EntityMaid> findTargetTask =
+                    StopAttackingIfTargetInvalid.create(target -> !hasAssaultWeapon(entityMaid) || farAway(target, entityMaid));
+            BehaviorControl<Mob> moveToTargetTask = SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(0.6f);
+            BehaviorControl<Mob> attackTargetTask = MeleeAttack.create(20);
+            MaidUseShieldTask maidUseShieldTask = new MaidUseShieldTask();
+
+            return Lists.newArrayList(
+                    Pair.of(5, supplementedTask),
+                    Pair.of(5, findTargetTask),
+                    Pair.of(5, moveToTargetTask),
+                    Pair.of(5, attackTargetTask),
+                    Pair.of(5, maidUseShieldTask)
+            );
+        }
+
+        private boolean hasAssaultWeapon(EntityMaid maid) {
+            return isWeapon(maid, maid.getMainHandItem());
+        }
+
+        private boolean farAway(LivingEntity target, EntityMaid maid) {
+            if (!target.isAlive()) {
+                return true;
+            }
+            boolean enable = maid.isHomeModeEnable();
+            float radius = ATTACK_RADIUS;
+            if (!enable && maid.getOwner() != null) {
+                return maid.getOwner().distanceTo(target) > radius;
+            }
+            return maid.distanceTo(target) > radius;
         }
     }
 
     @Override
     public void addMaidTask(TaskManager manager) {
-        manager.add(new AttacjTask());
+        manager.add(new AttackTask());
     }
 }
