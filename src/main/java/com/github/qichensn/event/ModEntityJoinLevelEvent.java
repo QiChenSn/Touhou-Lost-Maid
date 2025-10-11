@@ -12,6 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 import static com.github.qichensn.task.AttackPlayerTask.UID;
+import static com.github.qichensn.util.RandomEquipment.getRandomWeapon;
 
 @EventBusSubscriber
 public class ModEntityJoinLevelEvent {
@@ -39,7 +40,7 @@ public class ModEntityJoinLevelEvent {
 
     public static void equipMaid(EntityMaid maid){
         // 添加武器到主手
-        maid.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));
+        maid.setItemSlot(EquipmentSlot.MAINHAND, getRandomWeapon());
         // 添加盾牌到副手
         maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
         // 添加护甲
