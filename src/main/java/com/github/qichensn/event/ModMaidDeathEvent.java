@@ -4,10 +4,13 @@ import com.github.qichensn.TouhouLostMaid;
 import com.github.qichensn.data.LostMaidData;
 import com.github.tartaricacid.touhoulittlemaid.api.event.MaidDeathEvent;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskIdle;
+import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+
 
 @EventBusSubscriber(modid = TouhouLostMaid.MODID)
 public class ModMaidDeathEvent {
@@ -20,6 +23,8 @@ public class ModMaidDeathEvent {
         if(maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false) && source.getEntity() instanceof Player player) {
             maid.setOwnerUUID(player.getUUID());
             maid.setData(LostMaidData.IS_LOST_MAID,true);
+            // 设置task
+            TaskManager.findTask(TaskIdle.UID).ifPresent(maid::setTask);
         }
     }
 }
