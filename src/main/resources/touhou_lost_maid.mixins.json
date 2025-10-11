@@ -2,7 +2,9 @@
   "required": true,
   "package": "com.github.qichensn.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "EntityMaidMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },
