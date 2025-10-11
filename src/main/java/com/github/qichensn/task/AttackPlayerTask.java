@@ -45,6 +45,11 @@ public class AttackPlayerTask implements ILittleMaid {
         }
 
         @Override
+        public boolean isEnable(EntityMaid maid) {
+            return maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false);
+        }
+
+        @Override
         public @Nullable SoundEvent getAmbientSound(EntityMaid entityMaid) {
             return null;
         }
