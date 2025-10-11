@@ -32,7 +32,7 @@ public class AttackPlayerTask implements ILittleMaid {
     // TODO:可配置
     private static final float ATTACK_RADIUS=40.0f;
 
-    class AttackTask implements IAttackTask {
+    public class AttackTask implements IAttackTask {
 
         @Override
         public ResourceLocation getUid() {
