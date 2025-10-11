@@ -29,21 +29,23 @@ public class ModEntityJoinLevelEvent {
                 // 设置task
                 TaskManager.findTask(UID).ifPresent(maid::setTask);
 
-                // 发放武器
-
-                // 添加武器到主手
-                maid.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));
-                // 添加盾牌到副手
-                maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
-                // 添加护甲
-                maid.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
-                maid.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
-                maid.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
-                maid.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.DIAMOND_BOOTS));
-
+                // 给女仆穿装备
+                equipMaid(maid);
             } else {
                 maid.setData(LostMaidData.IS_LOST_MAID, false);
             }
         }
+    }
+
+    public static void equipMaid(EntityMaid maid){
+        // 添加武器到主手
+        maid.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));
+        // 添加盾牌到副手
+        maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+        // 添加护甲
+        maid.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
+        maid.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
+        maid.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
+        maid.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.DIAMOND_BOOTS));
     }
 }
