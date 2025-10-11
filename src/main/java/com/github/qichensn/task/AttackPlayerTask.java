@@ -29,6 +29,7 @@ public class AttackPlayerTask implements ILittleMaid {
             "attack_player");
 
     // 女仆追击距离
+    // TODO:可配置
     private static final float ATTACK_RADIUS=40.0f;
 
     class AttackTask implements IAttackTask {
