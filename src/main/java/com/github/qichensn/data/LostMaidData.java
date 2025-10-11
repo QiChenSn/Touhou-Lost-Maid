@@ -1,0 +1,22 @@
+package com.github.qichensn.data;
+
+import com.github.qichensn.TouhouLostMaid;
+import com.github.tartaricacid.touhoulittlemaid.api.ILittleMaid;
+import com.github.tartaricacid.touhoulittlemaid.api.LittleMaidExtension;
+import com.github.tartaricacid.touhoulittlemaid.api.entity.data.TaskDataKey;
+import com.github.tartaricacid.touhoulittlemaid.entity.data.TaskDataRegister;
+import com.mojang.serialization.Codec;
+import net.minecraft.resources.ResourceLocation;
+
+@LittleMaidExtension
+public class LostMaidData implements ILittleMaid {
+    public static TaskDataKey<Boolean> IS_LOST_MAID;
+
+    @Override
+    public void registerTaskData(TaskDataRegister register) {
+        IS_LOST_MAID = register.register(
+                ResourceLocation.fromNamespaceAndPath(TouhouLostMaid.MODID, "is_lost_maid"),
+                Codec.BOOL.fieldOf("value").codec()  // 将布尔值包装在字段中
+        );
+    }
+}

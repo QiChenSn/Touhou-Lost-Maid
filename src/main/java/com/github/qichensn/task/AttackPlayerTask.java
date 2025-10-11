@@ -1,6 +1,7 @@
 package com.github.qichensn.task;
 
 import com.github.qichensn.TouhouLostMaid;
+import com.github.qichensn.data.LostMaidData;
 import com.github.tartaricacid.touhoulittlemaid.api.ILittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.LittleMaidExtension;
 import com.github.tartaricacid.touhoulittlemaid.api.task.IAttackTask;
@@ -49,7 +50,7 @@ public class AttackPlayerTask implements ILittleMaid {
 
         @Override
         public boolean canAttack(EntityMaid maid, LivingEntity target) {
-            return target instanceof Player && !((Player) target).getAbilities().instabuild;
+            return target instanceof Player && !((Player) target).getAbilities().instabuild && maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false);
         }
 
         @Override
