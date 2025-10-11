@@ -7,6 +7,7 @@ import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,10 +23,10 @@ public class ModEntityJoinLevelEvent {
     public static void markLostMaid(EntityJoinLevelEvent event){
         if (event.getEntity() instanceof EntityMaid maid && !event.getLevel().isClientSide()) {
 
-            TouhouLostMaid.LOGGER.info("检测到女仆生成:"+maid+"\n生成方式:"+maid.getSpawnType());
-
-            // 检查生成类型：仅自然生成时标记
-            if (maid.getSpawnType() == MobSpawnType.NATURAL) {
+            // 检查生成类型：判断条件改为:
+            // 1.没有主人
+            // 2.非结构生成
+            if (maid.getOwnerUUID()==null && !maid.isStructureSpawn()) {
                 maid.setData(LostMaidData.IS_LOST_MAID, true);
                 // 设置工作时间
                 maid.setSchedule(MaidSchedule.ALL);

@@ -4,7 +4,7 @@
   "spawners": [
     {
       "type": "touhou_little_maid:maid",
-      "weight": 100,
+      "weight": 500,
       "minCount": 1,
       "maxCount": 4
     }
