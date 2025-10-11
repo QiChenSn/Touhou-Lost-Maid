@@ -17,8 +17,6 @@ public class ModMaidTickEvent {
         // TODO:删除测试逻辑
         if(maid.getMainHandItem().is(Items.DIAMOND_SWORD)){
             maid.setData(LostMaidData.IS_LOST_MAID, true);
-        }else{
-            maid.setData(LostMaidData.IS_LOST_MAID, false);
         }
     }
 }
