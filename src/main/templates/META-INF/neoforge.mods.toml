@@ -69,7 +69,7 @@ config="${mod_id}.mixins.json"
     # Optional field describing why the dependency is required or why it is incompatible
     # reason="..."
     # The version range of the dependency
-    versionRange="[${neo_version},)" #mandatory
+    versionRange="[21.1.206,)" #mandatory
     # An ordering relationship for the dependency.
     # BEFORE - This mod is loaded BEFORE the dependency
     # AFTER - This mod is loaded AFTER the dependency
@@ -83,6 +83,14 @@ config="${mod_id}.mixins.json"
     type="required"
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+# 指定车万女仆作为前置
+[[dependencies.${mod_id}]]
+    modId="touhou_little_maid"
+    type="required"
+    versionRange="[1.4.1-neoforge+mc1.21.1,)"
     ordering="NONE"
     side="BOTH"
 
