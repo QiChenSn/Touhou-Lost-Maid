@@ -1,6 +1,7 @@
 package com.github.qichensn.event;
 
 import com.github.qichensn.data.LostMaidData;
+import com.github.qichensn.util.RandomEquipment;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.MaidSchedule;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager;
@@ -10,6 +11,8 @@ import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+
+import java.util.Map;
 
 import static com.github.qichensn.task.AttackPlayerTask.UID;
 import static com.github.qichensn.util.RandomEquipment.getRandomWeapon;
@@ -44,9 +47,10 @@ public class ModEntityJoinLevelEvent {
         // 添加盾牌到副手
         maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
         // 添加护甲
-        maid.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
-        maid.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
-        maid.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
-        maid.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.DIAMOND_BOOTS));
+        Map<EquipmentSlot, ItemStack> randomArmorSet = RandomEquipment.getRandomArmorSet();
+        maid.setItemSlot(EquipmentSlot.HEAD, randomArmorSet.get(EquipmentSlot.HEAD));
+        maid.setItemSlot(EquipmentSlot.CHEST, randomArmorSet.get(EquipmentSlot.CHEST));
+        maid.setItemSlot(EquipmentSlot.LEGS, randomArmorSet.get(EquipmentSlot.LEGS));
+        maid.setItemSlot(EquipmentSlot.FEET, randomArmorSet.get(EquipmentSlot.FEET));
     }
 }
