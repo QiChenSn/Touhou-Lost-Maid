@@ -53,8 +53,8 @@ public class ModEntityJoinLevelEvent {
                     case Attack:
                         setAttackMaid(maid);
                         break;
-                    case Ranged_Attack:
-                        setRangedAttackMaid(maid);
+                    case BOW_Attack:
+                        setBowAttackMaid(maid);
                         break;
                     case Gun_Attack:
                         setGunAttackMaid(maid);
@@ -70,7 +70,7 @@ public class ModEntityJoinLevelEvent {
     private static void setGunAttackMaid(EntityMaid maid) {
     }
 
-    private static void setRangedAttackMaid(EntityMaid maid) {
+    private static void setBowAttackMaid(EntityMaid maid) {
     }
 
 
