@@ -61,17 +61,12 @@ public class ModEntityJoinLevelEvent {
                         break;
                     case NORMAL:
                     default:
-                        setNormalMaid(maid);
                         break;
                 }
                 break;
             }
         }
     }
-
-    private static void setNormalMaid(EntityMaid maid) {
-    }
-
     private static void setGunAttackMaid(EntityMaid maid) {
     }
 
