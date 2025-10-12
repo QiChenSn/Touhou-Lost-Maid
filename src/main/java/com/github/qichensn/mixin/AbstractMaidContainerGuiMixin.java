@@ -36,7 +36,7 @@ public abstract class AbstractMaidContainerGuiMixin<T extends AbstractMaidContai
     @Inject(method = "drawPerTaskButton",at = @At("HEAD"), cancellable = true)
     private void drawPerTaskButton(List<IMaidTask> tasks, int count, int index, CallbackInfo ci){
         IMaidTask ttask = tasks.get(index);
-        if(ttask instanceof AttackPlayerTask.AttackTask attackTask){
+        if(ttask instanceof AttackPlayerTask attackTask){
             ci.cancel();
         }
     }
