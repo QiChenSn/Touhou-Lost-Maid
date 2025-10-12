@@ -20,7 +20,7 @@ public class LostMaidData implements ILittleMaid {
         );
         LOST_MAID_TYPE=register.register(
                 ResourceLocation.fromNamespaceAndPath(TouhouLostMaid.MODID, "lost_maid_type"),
-                LostMaidType.CODEC
+                LostMaidType.CODEC.fieldOf("value").codec()// 依旧包装...
         );
     }
 }
