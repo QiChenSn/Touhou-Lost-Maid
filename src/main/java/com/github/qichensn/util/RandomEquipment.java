@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class RandomEquipment {
      * 获取游戏中所有被判定为武器的物品列表。
      */
     @SubscribeEvent
-    public static void getAllWeapons(RegisterEvent event) {
+    public static void getAllWeapons(BuildCreativeModeTabContentsEvent event) {
         if(WEAPON_LIST!=null)return;
         TouhouLostMaid.LOGGER.info("正在构建武器缓存...");
         List<Item> weaponList = new ArrayList<>();
