@@ -53,7 +53,7 @@ public class AttackPlayerTask implements IAttackTask {
 
     @Override
     public boolean canAttack(EntityMaid maid, LivingEntity target) {
-        return target instanceof Player && !((Player) target).getAbilities().instabuild && maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false);
+        return MaidTaskRegister.canAttack(maid,target);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.github.qichensn.event;
 import com.github.qichensn.data.LostMaidData;
 import com.github.qichensn.data.LostMaidType;
 import com.github.qichensn.task.AttackPlayerTask;
+import com.github.qichensn.task.BowAttackPlayerTask;
 import com.github.qichensn.util.RandomEquipment;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.MaidSchedule;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
@@ -71,6 +72,10 @@ public class ModEntityJoinLevelEvent {
     }
 
     private static void setBowAttackMaid(EntityMaid maid) {
+        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.BOW_Attack);
+        TaskManager.findTask(BowAttackPlayerTask.UID).ifPresent(maid::setTask);
+        maid.setItemSlot(EquipmentSlot.MAINHAND, Items.BOW.getDefaultInstance());
+        maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.ARROW,64));
     }
 
 

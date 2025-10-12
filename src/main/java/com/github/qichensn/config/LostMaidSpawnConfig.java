@@ -15,7 +15,7 @@ public class LostMaidSpawnConfig {
     static {
         lostMaidSpawnConfig.put(LostMaidType.NORMAL,0);
         lostMaidSpawnConfig.put(LostMaidType.Attack,10);
-        lostMaidSpawnConfig.put(LostMaidType.BOW_Attack,0);
+        lostMaidSpawnConfig.put(LostMaidType.BOW_Attack,10);
         lostMaidSpawnConfig.put(LostMaidType.Gun_Attack,0);
         for (LostMaidType value : LostMaidType.values()) {
             totalWeight += lostMaidSpawnConfig.get(value);
