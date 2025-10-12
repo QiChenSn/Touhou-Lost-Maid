@@ -1,6 +1,8 @@
 package com.github.qichensn.event;
 
 import com.github.qichensn.data.LostMaidData;
+import com.github.qichensn.data.LostMaidType;
+import com.github.qichensn.task.AttackPlayerTask;
 import com.github.qichensn.util.RandomEquipment;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.MaidSchedule;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
@@ -14,7 +16,6 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 import java.util.Map;
 
-import static com.github.qichensn.task.AttackPlayerTask.UID;
 import static com.github.qichensn.util.RandomEquipment.getRandomWeapon;
 
 @EventBusSubscriber
@@ -27,21 +28,62 @@ public class ModEntityJoinLevelEvent {
             // 1.没有主人
             // 2.非结构生成
             if (maid.getOwnerUUID()==null && !maid.isStructureSpawn()) {
-                maid.setData(LostMaidData.IS_LOST_MAID, true);
                 // 设置工作时间
                 maid.setSchedule(MaidSchedule.ALL);
-                // 设置task
-                TaskManager.findTask(UID).ifPresent(maid::setTask);
+                maid.setData(LostMaidData.IS_LOST_MAID, true);
 
-                // 给女仆穿装备
-                equipMaid(maid);
+                setMaidType(maid);
+
             } else {
                 maid.setData(LostMaidData.IS_LOST_MAID, false);
             }
         }
     }
 
-    public static void equipMaid(EntityMaid maid){
+    private static void setMaidType(EntityMaid maid) {
+        // 根据权重随机确定女仆类型
+        int random = maid.getRandom().nextInt(com.github.qichensn.config.LostMaidSpawnConfig.totalWeight);
+        int currentWeight = 0;
+
+        for (LostMaidType type : com.github.qichensn.config.LostMaidSpawnConfig.lostMaidSpawnConfig.keySet()) {
+            currentWeight += com.github.qichensn.config.LostMaidSpawnConfig.lostMaidSpawnConfig.get(type);
+            if (random < currentWeight) {
+                // 根据不同类型设置相应的属性
+                switch (type) {
+                    case Attack:
+                        setAttackMaid(maid);
+                        break;
+                    case Ranged_Attack:
+                        setRangedAttackMaid(maid);
+                        break;
+                    case Gun_Attack:
+                        setGunAttackMaid(maid);
+                        break;
+                    case NORMAL:
+                    default:
+                        setNormalMaid(maid);
+                        break;
+                }
+                break;
+            }
+        }
+    }
+
+    private static void setNormalMaid(EntityMaid maid) {
+    }
+
+    private static void setGunAttackMaid(EntityMaid maid) {
+    }
+
+    private static void setRangedAttackMaid(EntityMaid maid) {
+    }
+
+
+    // 配置近战女仆
+    private static void setAttackMaid(EntityMaid maid){
+        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.Attack);
+        // 设置task
+        TaskManager.findTask(AttackPlayerTask.UID).ifPresent(maid::setTask);
         // 添加武器到主手
         maid.setItemSlot(EquipmentSlot.MAINHAND, getRandomWeapon());
         // 添加盾牌到副手
