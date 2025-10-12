@@ -21,6 +21,10 @@ public class ModMaidDeathEvent {
 
         // 玩家击杀后驯服
         if(maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false) && source.getEntity() instanceof Player player) {
+            // 禁用FakePlayer
+            if(player.isFakePlayer()){
+                return;
+            }
             maid.setOwnerUUID(player.getUUID());
             maid.setData(LostMaidData.IS_LOST_MAID,true);
             // 设置task
