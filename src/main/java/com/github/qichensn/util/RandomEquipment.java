@@ -4,6 +4,7 @@ import com.github.qichensn.TouhouLostMaid;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -41,12 +42,15 @@ public class RandomEquipment {
             ItemAttributeModifiers modifiers = item.getDefaultInstance().getAttributeModifiers();
             for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
                 // 根据攻击伤害选择
+                // 要求攻击伤害大于2
                 if (entry.attribute().equals(Attributes.ATTACK_DAMAGE)) {
                     AttributeModifier modifier = entry.modifier();
-                    if (modifier.amount() > 0) {
+                    if (modifier.amount() > 2) {
                         boolean appliesToWeaponSlot = entry.slot().test(EquipmentSlot.MAINHAND);
                         if (appliesToWeaponSlot) {
                             weaponList.add(item);
+                            TouhouLostMaid.LOGGER.info("已将{}加入武器缓存列表",
+                                    item.getName(item.getDefaultInstance()));
                         }
                     }
                 }
@@ -54,7 +58,7 @@ public class RandomEquipment {
 
         }
         WEAPON_LIST = Collections.unmodifiableList(weaponList);
-        TouhouLostMaid.LOGGER.info("武器缓存构建完毕，共找到 " + WEAPON_LIST.size() + " 种武器。"+weaponList);
+        TouhouLostMaid.LOGGER.info("武器缓存构建完毕，共找到 {} 种武器。", WEAPON_LIST.size());
     }
 
     /**
