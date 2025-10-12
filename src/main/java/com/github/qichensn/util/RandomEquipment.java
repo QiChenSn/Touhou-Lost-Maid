@@ -25,18 +25,17 @@ import java.util.Random;
 
 import static com.github.qichensn.TouhouLostMaid.MODID;
 
-@EventBusSubscriber(modid = MODID)
 public class RandomEquipment {
 
     // 用于缓存所有被判定为武器的物品列表。
     private static List<Item> WEAPON_LIST = null;
     private static final Random RANDOM = new Random();
 
-    /**
-     * 获取游戏中所有被判定为武器的物品列表。
-     */
-    @SubscribeEvent
-    public static void getAllWeapons(BuildCreativeModeTabContentsEvent event) {
+    public static void init() {
+        getAllWeapons();
+    }
+
+    public static void getAllWeapons() {
         if(WEAPON_LIST!=null)return;
         TouhouLostMaid.LOGGER.info("正在构建武器缓存...");
         List<Item> weaponList = new ArrayList<>();
