@@ -14,6 +14,7 @@ public class MaidTaskRegister implements ILittleMaid {
     public void addMaidTask(TaskManager manager) {
         manager.add(new AttackPlayerTask());
         manager.add(new BowAttackPlayerTask());
+        manager.add(new GunAttackPlayerTask());
     }
 
     public static boolean canAttack(EntityMaid maid, LivingEntity target) {
