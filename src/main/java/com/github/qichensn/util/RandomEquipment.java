@@ -1,6 +1,7 @@
 package com.github.qichensn.util; // 您的包名
 
 import com.github.qichensn.TouhouLostMaid;
+import com.github.tartaricacid.touhoulittlemaid.compat.gun.common.GunCommonUtil;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -38,9 +39,29 @@ public class RandomEquipment {
     private static Map<String, Map<EquipmentSlot, Item>> ARMOR_MATERIALS = null;
     private static List<String> COMPLETE_MATERIALS = null;
 
+
+    // 缓存所有女仆可用枪械
+    private static List<Item> GUN_LIST =null;
+
     public static void init() {
         getAllWeapons();
         getAllArmors();
+        getAllGuns();
+    }
+
+    private static void getAllGuns() {
+        if(GUN_LIST!=null) return;
+        TouhouLostMaid.LOGGER.info("正在构建枪械缓存...");
+        List<Item> gunList = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM){
+            if(GunCommonUtil.isGun(item.getDefaultInstance())){
+                gunList.add(item);
+                TouhouLostMaid.LOGGER.info("已将{}加入枪械缓存列表",
+                        item.getName(item.getDefaultInstance()));
+            }
+        }
+        GUN_LIST = Collections.unmodifiableList(gunList);
+        TouhouLostMaid.LOGGER.info("枪械缓存构建完毕，共找到 {} 种枪械。", GUN_LIST.size());
     }
 
     public static void getAllWeapons() {
@@ -151,5 +172,15 @@ public class RandomEquipment {
             result.put(entry.getKey(), new ItemStack(entry.getValue()));
         }
         return result;
+    }
+
+    // 获取随机可用枪械
+    public static ItemStack getRandomGun() {
+        List<Item> gunList = GUN_LIST;
+        if (gunList.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        Item randomGunItem = gunList.get(RANDOM.nextInt(gunList.size()));
+        return new ItemStack(randomGunItem);
     }
 }

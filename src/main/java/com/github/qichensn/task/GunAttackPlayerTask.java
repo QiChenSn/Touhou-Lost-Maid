@@ -1,5 +1,6 @@
 package com.github.qichensn.task;
 
+import com.github.qichensn.TouhouLostMaid;
 import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.task.IRangedAttackTask;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.common.GunCommonUtil;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class GunAttackPlayerTask implements IRangedAttackTask {
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(TouhouLittleMaid.MOD_ID, "gun_attack");
+    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(TouhouLostMaid.MODID, "gun_attack");
     private static ItemStack ICON;
 
     @Override

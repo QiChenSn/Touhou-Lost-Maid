@@ -1,9 +1,12 @@
 package com.github.qichensn.event;
 
+import com.atsuishio.superbwarfare.init.ModItems;
+import com.atsuishio.superbwarfare.item.common.ammo.CreativeAmmoBox;
 import com.github.qichensn.data.LostMaidData;
 import com.github.qichensn.data.LostMaidType;
 import com.github.qichensn.task.AttackPlayerTask;
 import com.github.qichensn.task.BowAttackPlayerTask;
+import com.github.qichensn.task.GunAttackPlayerTask;
 import com.github.qichensn.util.RandomEquipment;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.MaidSchedule;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
@@ -69,6 +72,10 @@ public class ModEntityJoinLevelEvent {
         }
     }
     private static void setGunAttackMaid(EntityMaid maid) {
+        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.Gun_Attack);
+        TaskManager.findTask(GunAttackPlayerTask.UID).ifPresent(maid::setTask);
+        maid.setItemSlot(EquipmentSlot.MAINHAND, RandomEquipment.getRandomGun());
+        maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
     }
 
     private static void setBowAttackMaid(EntityMaid maid) {

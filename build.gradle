@@ -18,13 +18,96 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    // ./libs 目录为库
+    flatDir {
+        dir "libs"
+    }
+    mavenCentral()
     maven {
-        url "https://cursemaven.com"
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        url "https://maven.shedaniel.me/"
+        content {
+            includeGroup "me.shedaniel"
+            includeGroup "me.shedaniel.cloth"
+            includeGroup "dev.architectury"
+        }
+    }
+    maven {
+        url "https://maven2.bai.lol"
+        content {
+            includeGroup "mcp.mobius.waila"
+            includeGroup "lol.bai"
+        }
+    }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+        content {
+            includeGroup "dev.emi"
+        }
+    }
+    maven {
+        name 'cursemaven'
+        url "https://www.cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
     }
+    maven { // for TOP
+        url "https://maven.k-4u.nl/"
+        content {
+            includeGroup "mcjty.theoneprobe"
+        }
+    }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup "top.theillusivec4.curios"
+        }
+    }
+    maven {
+        url "https://maven.latvian.dev/releases"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+    maven {
+        url = "https://maven.architectury.dev"
+        content {
+            includeGroup "dev.architectury"
+        }
+    }
+    maven {
+        url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+            includeGroup "com.github.MUKSC"
+            includeGroup "com.github.FiguraMC.luaj"
+        }
+    }
+    maven {
+        url = "https://maven.createmod.net"
+        content {
+            includeGroup "net.createmod.ponder"
+            includeGroup "dev.engine-room.flywheel"
+        }
+    }
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupByRegex("software\\.bernie.*")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
 }
 
 base {
@@ -141,6 +224,11 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     // 添加 Touhou Little Maid 依赖
     implementation "curse.maven:touhou-little-maid-355044:6988538"
+
+    // 卓越前线
+    runtimeOnly "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.7.5"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:9.2.0+1.21.1"
+    implementation "libs:superbwarfare-1.21.1:0.8.7.1"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

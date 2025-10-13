@@ -1,5 +1,6 @@
 package com.github.qichensn.config;
 
+import com.github.qichensn.compat.ExtractModCheck;
 import com.github.qichensn.data.LostMaidType;
 
 import java.util.Arrays;
@@ -14,9 +15,11 @@ public class LostMaidSpawnConfig {
     public static int totalWeight;
     static {
         lostMaidSpawnConfig.put(LostMaidType.NORMAL,0);
-        lostMaidSpawnConfig.put(LostMaidType.Attack,10);
-        lostMaidSpawnConfig.put(LostMaidType.BOW_Attack,10);
-        lostMaidSpawnConfig.put(LostMaidType.Gun_Attack,0);
+        lostMaidSpawnConfig.put(LostMaidType.Attack,0);
+        lostMaidSpawnConfig.put(LostMaidType.BOW_Attack,0);
+        // 先检测已加载Mod
+        int gun_attack_weight= ExtractModCheck.isSWarfareLoaded()?10:0;
+        lostMaidSpawnConfig.put(LostMaidType.Gun_Attack,gun_attack_weight);
         for (LostMaidType value : LostMaidType.values()) {
             totalWeight += lostMaidSpawnConfig.get(value);
         }
