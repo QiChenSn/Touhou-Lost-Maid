@@ -2,6 +2,7 @@ package com.github.qichensn.util; // 您的包名
 
 import com.github.qichensn.TouhouLostMaid;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.common.GunCommonUtil;
+import com.github.tartaricacid.touhoulittlemaid.compat.gun.swarfare.SWarfareCompat;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,6 +51,12 @@ public class RandomEquipment {
     }
 
     private static void getAllGuns() {
+        // 兼容女仆工具类加载
+        // 已确保此方法被调用时一定加载了卓越前线mod
+        // 并且此方法在FML加载阶段调用
+        if(!SWarfareCompat.isInstalled()){
+            SWarfareCompat.init();
+        }
         if(GUN_LIST!=null) return;
         TouhouLostMaid.LOGGER.info("正在构建枪械缓存...");
         List<Item> gunList = new ArrayList<>();
