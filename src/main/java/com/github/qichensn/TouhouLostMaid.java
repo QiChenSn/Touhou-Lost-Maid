@@ -1,5 +1,6 @@
 package com.github.qichensn;
 
+import com.github.qichensn.config.ServerConfig;
 import com.github.qichensn.util.RandomEquipment;
 import org.slf4j.Logger;
 
@@ -54,8 +55,8 @@ public class TouhouLostMaid {
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        // 注册配置文件
+        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
