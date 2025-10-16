@@ -11,9 +11,9 @@ import net.minecraft.util.StringRepresentable;
 public enum LostMaidType implements StringRepresentable {
     // 枚举常量：定义三种攻击类型，并为其指定序列化时使用的字符串名称
     NORMAL("normal"),
-    Attack("attack"),
-    BOW_Attack("bow_attack"),
-    Gun_Attack("gun_attack");
+    ATTACK("attack"),
+    BOW_ATTACK("bow_attack"),
+    GUN_ATTACK("gun_attack");
 
 
     // 存储用于序列化的字符串名称

@@ -1,7 +1,6 @@
 package com.github.qichensn.event;
 
 import com.atsuishio.superbwarfare.init.ModItems;
-import com.atsuishio.superbwarfare.item.common.ammo.CreativeAmmoBox;
 import com.github.qichensn.data.LostMaidData;
 import com.github.qichensn.data.LostMaidType;
 import com.github.qichensn.task.AttackPlayerTask;
@@ -54,13 +53,13 @@ public class ModEntityJoinLevelEvent {
             if (random < currentWeight) {
                 // 根据不同类型设置相应的属性
                 switch (type) {
-                    case Attack:
+                    case ATTACK:
                         setAttackMaid(maid);
                         break;
-                    case BOW_Attack:
+                    case BOW_ATTACK:
                         setBowAttackMaid(maid);
                         break;
-                    case Gun_Attack:
+                    case GUN_ATTACK:
                         setGunAttackMaid(maid);
                         break;
                     case NORMAL:
@@ -72,14 +71,14 @@ public class ModEntityJoinLevelEvent {
         }
     }
     private static void setGunAttackMaid(EntityMaid maid) {
-        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.Gun_Attack);
+        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.GUN_ATTACK);
         TaskManager.findTask(GunAttackPlayerTask.UID).ifPresent(maid::setTask);
         maid.setItemSlot(EquipmentSlot.MAINHAND, RandomEquipment.getRandomGun());
         maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
     }
 
     private static void setBowAttackMaid(EntityMaid maid) {
-        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.BOW_Attack);
+        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.BOW_ATTACK);
         TaskManager.findTask(BowAttackPlayerTask.UID).ifPresent(maid::setTask);
         maid.setItemSlot(EquipmentSlot.MAINHAND, Items.BOW.getDefaultInstance());
         maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.ARROW,64));
@@ -88,7 +87,7 @@ public class ModEntityJoinLevelEvent {
 
     // 配置近战女仆
     private static void setAttackMaid(EntityMaid maid){
-        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.Attack);
+        maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.ATTACK);
         // 设置task
         TaskManager.findTask(AttackPlayerTask.UID).ifPresent(maid::setTask);
         // 添加武器到主手
