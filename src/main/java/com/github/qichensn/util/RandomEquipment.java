@@ -1,10 +1,11 @@
-package com.github.qichensn.util; // 您的包名
+package com.github.qichensn.util;
 
 import com.github.qichensn.TouhouLostMaid;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.common.GunCommonUtil;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.swarfare.SWarfareCompat;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -12,8 +13,15 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -44,10 +52,33 @@ public class RandomEquipment {
     // 缓存所有女仆可用枪械
     private static List<Item> GUN_LIST =null;
 
+    // 缓存所有箭矢物品
+    private static List<Item> ARROW_LIST = null;
+
+    // 缓存所有药水效果
+    private static List<PotionContents> POTION_LIST = null;
+
     public static void init() {
         getAllWeapons();
         getAllArmors();
         getAllGuns();
+        getAllArrows();
+    }
+
+    private static void getAllArrows() {
+        if (ARROW_LIST != null) return;
+        TouhouLostMaid.LOGGER.info("正在构建箭矢缓存...");
+        List<Item> arrowList = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            // 使用 instanceof 检查是否为箭矢类型
+            if (item instanceof ArrowItem) {
+                arrowList.add(item);
+                TouhouLostMaid.LOGGER.info("已将{}加入箭矢缓存列表",
+                        item.getName(item.getDefaultInstance()));
+            }
+        }
+        ARROW_LIST = Collections.unmodifiableList(arrowList);
+        TouhouLostMaid.LOGGER.info("箭矢缓存构建完毕，共找到 {} 种箭矢。", ARROW_LIST.size());
     }
 
     private static void getAllGuns() {
@@ -71,7 +102,7 @@ public class RandomEquipment {
         TouhouLostMaid.LOGGER.info("枪械缓存构建完毕，共找到 {} 种枪械。", GUN_LIST.size());
     }
 
-    public static void getAllWeapons() {
+    private static void getAllWeapons() {
         if(WEAPON_LIST!=null)return;
         TouhouLostMaid.LOGGER.info("正在构建武器缓存...");
         List<Item> weaponList = new ArrayList<>();
@@ -98,7 +129,7 @@ public class RandomEquipment {
         TouhouLostMaid.LOGGER.info("武器缓存构建完毕，共找到 {} 种武器。", WEAPON_LIST.size());
     }
 
-    public static void getAllArmors() {
+    private static void getAllArmors() {
         if (ARMOR_MATERIALS != null) return;
         TouhouLostMaid.LOGGER.info("正在构建护甲套装缓存...");
         Map<String, Map<EquipmentSlot, Item>> armorMaterials = new HashMap<>();
@@ -189,5 +220,27 @@ public class RandomEquipment {
         }
         Item randomGunItem = gunList.get(RANDOM.nextInt(gunList.size()));
         return new ItemStack(randomGunItem);
+    }
+
+    /**
+     * 从游戏中所有箭矢中随机获取一个。(注意:MC原版中有三种箭 我们应该优先返回药水箭)
+     * 并且对于药水箭进行特殊处理
+     * @return 一个包含随机箭矢的 ItemStack。如果游戏内没有箭矢，则返回 ItemStack.EMPTY。
+     */
+    public static ItemStack getRandomArrow() {
+        // 单独判断药水箭
+        float f = RANDOM.nextFloat();
+        // TODO: 可配置
+        if (f <= 0.8F) {
+            ItemStack arrow = new ItemStack(Items.TIPPED_ARROW);
+            return arrow;
+        }
+
+        List<Item> arrows = ARROW_LIST;
+        if (arrows.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        Item randomArrowItem = arrows.get(RANDOM.nextInt(arrows.size()));
+        return new ItemStack(randomArrowItem);
     }
 }

@@ -30,6 +30,9 @@ public class ModEntityJoinLevelEvent {
             // 检查生成类型：判断条件改为:
             // 1.没有主人
             // 2.非结构生成
+
+            // TODO 注意: 此处可能与其他自然生成女仆的方式冲突
+
             if (maid.getOwnerUUID()==null && !maid.isStructureSpawn()) {
                 // 设置工作时间
                 maid.setSchedule(MaidSchedule.ALL);
@@ -74,14 +77,15 @@ public class ModEntityJoinLevelEvent {
         maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.GUN_ATTACK);
         TaskManager.findTask(GunAttackPlayerTask.UID).ifPresent(maid::setTask);
         maid.setItemSlot(EquipmentSlot.MAINHAND, RandomEquipment.getRandomGun());
-        maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
+        // maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
     }
 
     private static void setBowAttackMaid(EntityMaid maid) {
         maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.BOW_ATTACK);
         TaskManager.findTask(BowAttackPlayerTask.UID).ifPresent(maid::setTask);
         maid.setItemSlot(EquipmentSlot.MAINHAND, Items.BOW.getDefaultInstance());
-        maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.ARROW,64));
+        // 开局一只箭 后续全靠刷
+        maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.ARROW,1));
     }
 
 
