@@ -1,6 +1,7 @@
 package com.github.qichensn.util;
 
 import com.github.qichensn.TouhouLostMaid;
+import com.github.qichensn.config.ServerConfig;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.common.GunCommonUtil;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.swarfare.SWarfareCompat;
 import com.google.common.collect.Multimap;
@@ -259,7 +260,7 @@ public class RandomEquipment {
         // 单独判断药水箭
         float f = RANDOM.nextFloat();
         // TODO: 可配置
-        if (f <= 0.8F) {
+        if (f <= ServerConfig.TIPPED_ARROW_CHANCE.get()) {
             ItemStack arrow = new ItemStack(Items.TIPPED_ARROW);
             arrow.set(DataComponents.POTION_CONTENTS,new PotionContents(getRandomPotion()));
             return arrow;
