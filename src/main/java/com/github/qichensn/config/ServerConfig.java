@@ -24,10 +24,10 @@ public class ServerConfig {
         ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("AttackLostMaidSpawnWeight",100,1,Integer.MAX_VALUE);
 
         builder.comment("弓箭远程女仆生成权重");
-        BOW_ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("BowAttackLostMaidSpawnWeight",100,0,Integer.MAX_VALUE);
+        BOW_ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("BowAttackLostMaidSpawnWeight",30,0,Integer.MAX_VALUE);
 
         builder.comment("枪械女仆生成权重");
-        GUN_ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("GunAttackLostMaidSpawnWeight",100,0,Integer.MAX_VALUE);
+        GUN_ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("GunAttackLostMaidSpawnWeight",10,0,Integer.MAX_VALUE);
 
         builder.comment("弓箭远程女仆使用药水箭的概率");
         TIPPED_ARROW_CHANCE=builder.defineInRange("Tipped_Arrow_Chance",0.3,0,1);
