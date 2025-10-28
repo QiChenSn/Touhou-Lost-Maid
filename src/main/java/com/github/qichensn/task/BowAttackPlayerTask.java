@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static com.github.qichensn.util.RandomEquipment.getRandomArrow;
 import static com.github.tartaricacid.touhoulittlemaid.datagen.EnchantmentKeys.getEnchantmentLevel;
 
 public class BowAttackPlayerTask implements IRangedAttackTask {
@@ -122,7 +123,7 @@ public class BowAttackPlayerTask implements IRangedAttackTask {
                 shooter.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (shooter.getRandom().nextFloat() * 0.4F + 0.8F));
                 shooter.level().addFreshEntity(entityArrow);
                 // 射完自动获取箭矢
-
+                shooter.setItemSlot(EquipmentSlot.OFFHAND, getRandomArrow());
             }
         }
     }
