@@ -200,7 +200,8 @@ public class BowAttackPlayerTask implements IRangedAttackTask {
             arrowStack.shrink(1);
             handler.setStackInSlot(slot, arrowStack);
             // 记得把箭设置为可以拾起状态
-            arrowEntity.pickup = AbstractArrow.Pickup.ALLOWED;
+            // 不行, 不能让狗修金刷箭!
+            arrowEntity.pickup = AbstractArrow.Pickup.DISALLOWED;
         }
 
         // 箭伤害也和好感度挂钩
