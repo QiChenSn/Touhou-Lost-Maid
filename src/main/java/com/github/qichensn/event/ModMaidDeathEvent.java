@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
+import static com.github.qichensn.util.ItemUtil.deleteBannedItems;
+
 
 @EventBusSubscriber(modid = TouhouLostMaid.MODID)
 public class ModMaidDeathEvent {
@@ -18,6 +20,8 @@ public class ModMaidDeathEvent {
     public static void onDeath(MaidDeathEvent  event) {
         EntityMaid maid = event.getMaid();
         DamageSource source = event.getSource();
+        // 移除违禁品
+        deleteBannedItems(maid);
 
         // 玩家击杀后驯服
         if(maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false) && source.getEntity() instanceof Player player) {

@@ -77,7 +77,8 @@ public class ModEntityJoinLevelEvent {
         maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.GUN_ATTACK);
         TaskManager.findTask(GunAttackPlayerTask.UID).ifPresent(maid::setTask);
         maid.setItemSlot(EquipmentSlot.MAINHAND, RandomEquipment.getRandomGun());
-        // maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
+        // 需要处理此物品 防止被玩家获取到
+        maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
     }
 
     private static void setBowAttackMaid(EntityMaid maid) {
