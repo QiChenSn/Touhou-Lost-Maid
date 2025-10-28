@@ -29,6 +29,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,14 +56,15 @@ public class RandomEquipment {
     // 缓存所有箭矢物品
     private static List<Item> ARROW_LIST = null;
 
-    // 缓存所有药水效果
-    private static List<PotionContents> POTION_LIST = null;
+    // 缓存所有可用的药水效果
+    private static List<Holder.Reference<Potion>> POTION_LIST = null;
 
     public static void init() {
         getAllWeapons();
         getAllArmors();
         getAllGuns();
         getAllArrows();
+        getAllPotions();
     }
 
     private static void getAllArrows() {
@@ -79,6 +81,23 @@ public class RandomEquipment {
         }
         ARROW_LIST = Collections.unmodifiableList(arrowList);
         TouhouLostMaid.LOGGER.info("箭矢缓存构建完毕，共找到 {} 种箭矢。", ARROW_LIST.size());
+    }
+
+    private static void getAllPotions() {
+        if (POTION_LIST != null) return;
+        TouhouLostMaid.LOGGER.info("正在构建药水效果缓存...");
+        List<Holder.Reference<Potion>> potionList = new ArrayList<>();
+        for (Holder.Reference<Potion> potionHolder : BuiltInRegistries.POTION.holders().toList()) {
+            Potion potion = potionHolder.value();
+            // 过滤掉空药水和水瓶
+            if (potion != Potions.POISON && potion != Potions.WATER) {
+                potionList.add(potionHolder);
+                TouhouLostMaid.LOGGER.info("已将{}加入药水效果缓存列表",
+                        potionHolder.getRegisteredName());
+            }
+        }
+        POTION_LIST = Collections.unmodifiableList(potionList);
+        TouhouLostMaid.LOGGER.info("药水效果缓存构建完毕，共找到 {} 种药水效果。", POTION_LIST.size());
     }
 
     private static void getAllGuns() {
@@ -222,6 +241,15 @@ public class RandomEquipment {
         return new ItemStack(randomGunItem);
     }
 
+    public static Holder.Reference<Potion> getRandomPotion(){
+        // 从缓存的药水效果列表中随机选取
+        List<Holder.Reference<Potion>> potions = POTION_LIST;
+        if(potions != null && !potions.isEmpty()){
+            return potions.get(RANDOM.nextInt(potions.size()));
+        }
+        return (Holder.Reference<Potion>) Potions.POISON;
+    }
+
     /**
      * 从游戏中所有箭矢中随机获取一个。(注意:MC原版中有三种箭 我们应该优先返回药水箭)
      * 并且对于药水箭进行特殊处理
@@ -233,6 +261,7 @@ public class RandomEquipment {
         // TODO: 可配置
         if (f <= 0.8F) {
             ItemStack arrow = new ItemStack(Items.TIPPED_ARROW);
+            arrow.set(DataComponents.POTION_CONTENTS,new PotionContents(getRandomPotion()));
             return arrow;
         }
 
