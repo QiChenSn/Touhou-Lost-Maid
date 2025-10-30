@@ -2,14 +2,14 @@ package com.github.qichensn.util;
 
 import com.atsuishio.superbwarfare.init.ModItems;
 import com.github.qichensn.data.LostMaidData;
-import com.github.tartaricacid.touhoulittlemaid.compat.gun.swarfare.SWarfareCompat;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.github.qichensn.compat.ExtractModCheck.isSWarfareLoaded;
@@ -47,5 +47,23 @@ public class ItemUtil {
     // 检查物品是否为违禁物品
     private static boolean isBannedItem(ItemStack stack) {
         return !stack.isEmpty() && BANNED_ITEMS.contains(stack.getItem());
+    }
+
+    /**
+     * 判断药水效果是否为负面效果
+     * @param potionContents 药水内容
+     * @return 如果是负面效果返回true，否则返回false
+     */
+    public static boolean isNegativePotionEffect(PotionContents potionContents) {
+        // 空值检查
+        if (potionContents == null) {
+            return false;
+        }
+        for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
+            if(!allEffect.getEffect().value().isBeneficial()){
+                return false;
+            }
+        }
+        return true;
     }
 }
