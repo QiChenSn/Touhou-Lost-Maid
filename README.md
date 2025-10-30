@@ -53,3 +53,11 @@
 - [ ] 重写Brain以优化远程攻击逻辑(酒狐你别开透视了好不好)
 - [ ] 使用TLM更新的Task#isHidden接口
 - [ ] 可配置生成概率
+
+## 兼容性
+
+请注意, 此Mod与[Touhou Little Maid: Spell](https://github.com/yimeng261/Touhou-Little-Maid-Spell)(以下简称为:万法皆通)不兼容. 
+
+在安装了"万法皆通"的情况下, 此Mod生成的迷失女仆将无法对玩家造成伤害.
+
+此外, 本Mod未来不会主动兼容"万法皆通"Mod, 请不要询问或者报告有有关的问题!
