@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_spawn_costs",
+  "biomes": "#c:is_overworld",
+  "entity_types": "touhou_little_maid:maid",
+  "spawn_cost": {
+    "energy_budget": 0.1,
+    "charge": 50
+  }
+}
