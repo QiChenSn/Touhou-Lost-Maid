@@ -8,6 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import static com.github.qichensn.config.ServerConfig.BENEFIT_ARROW_CHANCE;
 
 public class RandomEquipment {
 
@@ -46,6 +49,12 @@ public class RandomEquipment {
 
     // 缓存所有可用的药水效果
     private static List<Holder.Reference<Potion>> POTION_LIST = null;
+
+    // 缓存所有增益药水效果
+    private static List<Holder.Reference<Potion>> BENEFICIAL_POTION_LIST = null;
+
+    // 缓存所有非增益药水效果
+    private static List<Holder.Reference<Potion>> NOT_BENEFICIAL_POTION_LIST = null;
 
     public static void init() {
         getAllWeapons();
@@ -71,21 +80,65 @@ public class RandomEquipment {
         TouhouLostMaid.LOGGER.info("箭矢缓存构建完毕，共找到 {} 种箭矢。", ARROW_LIST.size());
     }
 
+    /**
+     * 判断药水是否为增益药水（正面效果）
+     * @param potion 药水类型
+     * @return 如果是增益药水返回true，否则返回false
+     */
+    public static boolean isBeneficialPotion(Potion potion) {
+        if (potion == null) {
+            return false;
+        }
+        List<MobEffectInstance> effects = potion.getEffects();
+        // 如果没有效果，不视为增益药水
+        if (effects.isEmpty()) {
+            return false;
+        }
+        // 检查是否所有效果都是增益效果
+        for (MobEffectInstance effect : effects) {
+            if (effect == null) {
+                continue;
+            }
+            // 如果有任何一个负面效果，则不是增益药水
+            if (!effect.getEffect().value().isBeneficial()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static void getAllPotions() {
         if (POTION_LIST != null) return;
         TouhouLostMaid.LOGGER.info("正在构建药水效果缓存...");
         List<Holder.Reference<Potion>> potionList = new ArrayList<>();
+        List<Holder.Reference<Potion>> beneficialPotionList = new ArrayList<>();
+        List<Holder.Reference<Potion>> harmfulPotionList = new ArrayList<>();
+
         for (Holder.Reference<Potion> potionHolder : BuiltInRegistries.POTION.holders().toList()) {
             Potion potion = potionHolder.value();
             // 过滤掉空药水和水瓶
             if (potion != Potions.POISON && potion != Potions.WATER) {
                 potionList.add(potionHolder);
-                TouhouLostMaid.LOGGER.info("已将{}加入药水效果缓存列表",
-                        potionHolder.getRegisteredName());
+
+                // 根据药水效果分类
+                if (isBeneficialPotion(potion)) {
+                    beneficialPotionList.add(potionHolder);
+                    TouhouLostMaid.LOGGER.info("已将{}加入增益药水效果缓存列表",
+                            potionHolder.getRegisteredName());
+                } else {
+                    harmfulPotionList.add(potionHolder);
+                    TouhouLostMaid.LOGGER.info("已将{}加入负面药水效果缓存列表",
+                            potionHolder.getRegisteredName());
+                }
             }
         }
         POTION_LIST = Collections.unmodifiableList(potionList);
+        BENEFICIAL_POTION_LIST = Collections.unmodifiableList(beneficialPotionList);
+        NOT_BENEFICIAL_POTION_LIST = Collections.unmodifiableList(harmfulPotionList);
+
         TouhouLostMaid.LOGGER.info("药水效果缓存构建完毕，共找到 {} 种药水效果。", POTION_LIST.size());
+        TouhouLostMaid.LOGGER.info("增益药水效果缓存构建完毕，共找到 {} 种增益药水效果。", BENEFICIAL_POTION_LIST.size());
+        TouhouLostMaid.LOGGER.info("非增益药水效果缓存构建完毕，共找到 {} 种非增益药水效果。", NOT_BENEFICIAL_POTION_LIST.size());
     }
 
     private static void getAllGuns() {
@@ -230,11 +283,45 @@ public class RandomEquipment {
     }
 
     public static Holder.Reference<Potion> getRandomPotion(){
-        // 从缓存的药水效果列表中随机选取
-        List<Holder.Reference<Potion>> potions = POTION_LIST;
-        if(potions != null && !potions.isEmpty()){
-            return potions.get(RANDOM.nextInt(potions.size()));
+        float f = RANDOM.nextFloat();
+        if(f <= BENEFIT_ARROW_CHANCE.get()){
+            return getRandomBeneficialPotion();
         }
+        return getRandomNotBeneficialPotion();
+    }
+
+    /**
+     * 从增益药水效果列表中随机获取一个药水效果。
+     * @return 一个增益药水效果的Holder引用。如果没有增益药水效果，则返回默认的POISON药水。
+     */
+    public static Holder.Reference<Potion> getRandomBeneficialPotion(){
+        // 从缓存的增益药水效果列表中随机选取
+        List<Holder.Reference<Potion>> beneficialPotions = BENEFICIAL_POTION_LIST;
+        if(beneficialPotions != null && !beneficialPotions.isEmpty()){
+            return beneficialPotions.get(RANDOM.nextInt(beneficialPotions.size()));
+        }
+        // 如果没有找到增益药水，返回一个默认的增益药水
+        // 这里返回一个常见的增益药水，如力量药水或速度药水
+        for (Holder.Reference<Potion> potionHolder : BuiltInRegistries.POTION.holders().toList()) {
+            Potion potion = potionHolder.value();
+            if (potion.getEffects().stream()
+                    .allMatch(effect -> effect != null && effect.getEffect().value().isBeneficial()) && !potion.getEffects().isEmpty()) {
+                return potionHolder;
+            }
+        }
+        return (Holder.Reference<Potion>) Potions.STRENGTH; // 默认返回力量药水
+    }
+
+    /**
+     * 从非增益药水效果列表中随机获取一个药水效果。
+     * @return 一个非增益药水效果的Holder引用。如果没有负面药水效果，则返回默认的POISON药水。
+     */
+    public static Holder.Reference<Potion> getRandomNotBeneficialPotion(){
+        List<Holder.Reference<Potion>> harmfulPotions = NOT_BENEFICIAL_POTION_LIST;
+        if(harmfulPotions != null && !harmfulPotions.isEmpty()){
+            return harmfulPotions.get(RANDOM.nextInt(harmfulPotions.size()));
+        }
+        // 返回默认的POISON药水
         return (Holder.Reference<Potion>) Potions.POISON;
     }
 

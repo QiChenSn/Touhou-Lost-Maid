@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -14,7 +15,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 
-import static com.github.qichensn.util.ItemUtil.isNegativePotionEffect;
+import static com.github.qichensn.util.RandomEquipment.isBeneficialPotion;
+
 
 /**
  * 事件监听器，用于处理女仆受伤时的逻辑
@@ -58,9 +60,9 @@ public class ModMaidHurtEvent {
                         PotionContents potionContents =
                                 arrow.getPickupItemStackOrigin().get(DataComponents.POTION_CONTENTS);
                         if (potionContents != null && !potionContents.equals(PotionContents.EMPTY)) {
-                            // 检查药水效果是否为负面效果
-                            if (isNegativePotionEffect(potionContents)) {
-                                // 如果是负面药水效果，取消伤害
+                            // 检查药水效果是否为正面效果
+                            Potion value = potionContents.potion().get().value();
+                            if(!isBeneficialPotion(value)){
                                 event.setCanceled(true);
                             }
                         }

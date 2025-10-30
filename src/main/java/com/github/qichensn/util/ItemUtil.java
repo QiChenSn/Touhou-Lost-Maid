@@ -48,22 +48,4 @@ public class ItemUtil {
     private static boolean isBannedItem(ItemStack stack) {
         return !stack.isEmpty() && BANNED_ITEMS.contains(stack.getItem());
     }
-
-    /**
-     * 判断药水效果是否为负面效果
-     * @param potionContents 药水内容
-     * @return 如果是负面效果返回true，否则返回false
-     */
-    public static boolean isNegativePotionEffect(PotionContents potionContents) {
-        // 空值检查
-        if (potionContents == null) {
-            return false;
-        }
-        for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
-            if(!allEffect.getEffect().value().isBeneficial()){
-                return false;
-            }
-        }
-        return true;
-    }
 }
