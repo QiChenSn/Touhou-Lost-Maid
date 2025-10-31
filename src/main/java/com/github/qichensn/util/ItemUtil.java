@@ -1,27 +1,36 @@
 package com.github.qichensn.util;
 
 import com.atsuishio.superbwarfare.init.ModItems;
+import com.github.qichensn.config.ServerConfig;
 import com.github.qichensn.data.LostMaidData;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.github.qichensn.compat.ExtractModCheck.isSWarfareLoaded;
 
 public class ItemUtil {
 
-    // TODO:可配置
     public static Set<Item> BANNED_ITEMS = new HashSet<>();
 
     static {
-        // 先检查是否安装了卓越前线
-        // 此方法应该在游戏内调用, 此时isInstalled返回的结果是准确的
+        // 添加通过配置文件定义的黑名单物品
+        List<? extends String> configuredItems = ServerConfig.BANNED_ITEMS.get();
+        for (String itemString : configuredItems) {
+            // 先检查一下，确保游戏中确实有该物品
+            if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemString))) {
+                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemString));
+                BANNED_ITEMS.add(item);
+            }
+        }
+        // 强制禁止掉落的物品
         if(isSWarfareLoaded()){
             BANNED_ITEMS.add(ModItems.CREATIVE_AMMO_BOX.get());
         }
