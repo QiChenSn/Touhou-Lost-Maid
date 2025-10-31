@@ -22,7 +22,7 @@ public class ItemUtil {
 
     static {
         // 添加通过配置文件定义的黑名单物品
-        List<? extends String> configuredItems = ServerConfig.BANNED_ITEMS.get();
+        List<String> configuredItems = ServerConfig.BANNED_ITEMS.get();
         for (String itemString : configuredItems) {
             // 先检查一下，确保游戏中确实有该物品
             if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemString))) {
