@@ -56,8 +56,20 @@
 
 ## 兼容性
 
-请注意, 此Mod与[Touhou Little Maid: Spell](https://github.com/yimeng261/Touhou-Little-Maid-Spell)(以下简称为:万法皆通)不兼容. 
+目前已知与以下Mod不兼容
 
-在安装了"万法皆通"的情况下, 此Mod生成的迷失女仆将无法对玩家造成伤害.
+1. Touhou Little Maid: Spell
 
-此外, 本Mod未来不会主动兼容"万法皆通"Mod, 请不要询问或者报告有关的兼容性问题!
+    请注意, 此Mod与[Touhou Little Maid: Spell](https://github.com/yimeng261/Touhou-Little-Maid-Spell)(以下简称为:万法皆通)不兼容. 
+
+    在安装了"万法皆通"的情况下, 此Mod生成的迷失女仆将无法对玩家造成伤害.
+
+    此外, 本Mod未来不会主动兼容"万法皆通"Mod, 请不要询问或者报告有关的兼容性问题!
+
+2. Mekanism
+    
+    已知在同时安装此Mod与Mekanism的情况下会导致崩溃, 目前已查明原因, 但是没有明确好兼容方案. 
+
+    考虑到两款Mod之间定位差异, 不建议玩家同时安装二者, 因此目前选择延后兼容事项. 如果您希望能够兼容Mekanism,
+         
+    欢迎加群反馈, 或者为此Mod提交PR.
