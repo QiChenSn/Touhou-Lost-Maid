@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.github.qichensn.config.ServerConfig.BENEFIT_ARROW_CHANCE;
+import static com.github.qichensn.util.ItemUtil.isEquipmentBannedItem;
 
 public class RandomEquipment {
 
@@ -71,6 +72,8 @@ public class RandomEquipment {
         for (Item item : BuiltInRegistries.ITEM) {
             // 使用 instanceof 检查是否为箭矢类型
             if (item instanceof ArrowItem) {
+                // 检查黑名单
+                if(isEquipmentBannedItem(item)) continue;
                 arrowList.add(item);
                 TouhouLostMaid.LOGGER.info("已将{}加入箭矢缓存列表",
                         item.getName(item.getDefaultInstance()));
@@ -153,6 +156,8 @@ public class RandomEquipment {
         List<Item> gunList = new ArrayList<>();
         for (Item item : BuiltInRegistries.ITEM){
             if(GunCommonUtil.isGun(item.getDefaultInstance())){
+                // 黑名单
+                if(isEquipmentBannedItem(item)) continue;
                 gunList.add(item);
                 TouhouLostMaid.LOGGER.info("已将{}加入枪械缓存列表",
                         item.getName(item.getDefaultInstance()));
@@ -167,6 +172,8 @@ public class RandomEquipment {
         TouhouLostMaid.LOGGER.info("正在构建武器缓存...");
         List<Item> weaponList = new ArrayList<>();
         for (Item item : BuiltInRegistries.ITEM) {
+            // 黑名单
+            if(isEquipmentBannedItem(item)) continue;
             ItemAttributeModifiers modifiers = item.getDefaultInstance().getAttributeModifiers();
             for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
                 // 根据攻击伤害选择
@@ -200,6 +207,8 @@ public class RandomEquipment {
         typeToSlot.put("boots", EquipmentSlot.FEET);
 
         for (Item item : BuiltInRegistries.ITEM) {
+            // 黑名单
+            if(isEquipmentBannedItem(item)) continue;
             ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
             if (key == null) continue;
             String path = key.getPath();

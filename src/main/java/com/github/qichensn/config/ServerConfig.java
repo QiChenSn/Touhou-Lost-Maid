@@ -29,6 +29,9 @@ public class ServerConfig {
     // 女仆掉落物黑名单配置
     public static ModConfigSpec.ConfigValue<List<String>> BANNED_ITEMS;
 
+    // 女仆装备黑名单配置
+    public static ModConfigSpec.ConfigValue<List<String>> EQUIPMENT_BANNED_ITEMS;
+
     public static ModConfigSpec init(){
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -58,6 +61,9 @@ public class ServerConfig {
         builder.comment("女仆掉落物黑名单配置");
         builder.comment("说明: 填入物品的注册名，例如: [\"minecraft:diamond\", \"minecraft:enchanted_golden_apple\"]");
         BANNED_ITEMS = builder.define("Banned_Items", Lists.newArrayList());
+
+        builder.comment("女仆装备黑名单配置");
+        EQUIPMENT_BANNED_ITEMS = builder.define("Equipment_Banned_Items", Lists.newArrayList());
 
         return builder.build();
     }

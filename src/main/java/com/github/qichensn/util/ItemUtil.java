@@ -19,6 +19,7 @@ import static com.github.qichensn.compat.ExtractModCheck.isSWarfareLoaded;
 public class ItemUtil {
 
     public static Set<Item> BANNED_ITEMS = new HashSet<>();
+    public static Set<Item> EQUIPMENT_BANNED_ITEMS = new HashSet<>();
 
     static {
         // 添加通过配置文件定义的黑名单物品
@@ -33,6 +34,15 @@ public class ItemUtil {
         // 强制禁止掉落的物品
         if(isSWarfareLoaded()){
             BANNED_ITEMS.add(ModItems.CREATIVE_AMMO_BOX.get());
+        }
+
+        // 装备黑名单
+        List<String> bannedItems = ServerConfig.EQUIPMENT_BANNED_ITEMS.get();
+        for (String itemString : bannedItems) {
+            if (BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemString))) {
+                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemString));
+                EQUIPMENT_BANNED_ITEMS.add(item);
+            }
         }
     }
 
@@ -53,8 +63,18 @@ public class ItemUtil {
         }
     }
 
-    // 检查物品是否为违禁物品
-    private static boolean isBannedItem(ItemStack stack) {
+    // 检查物品是否为违禁掉落物
+    public static boolean isBannedItem(ItemStack stack) {
         return !stack.isEmpty() && BANNED_ITEMS.contains(stack.getItem());
+    }
+
+    // 检查物品是否为违禁持有物
+    public static boolean isEquipmentBannedItem(ItemStack stack) {
+        return !stack.isEmpty() && EQUIPMENT_BANNED_ITEMS.contains(stack.getItem());
+    }
+
+    // 检查物品是否为违禁持有物
+    public static boolean isEquipmentBannedItem(Item item) {
+        return EQUIPMENT_BANNED_ITEMS.contains(item);
     }
 }
