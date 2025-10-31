@@ -25,7 +25,7 @@ public class ServerConfig {
         builder.comment("女仆服务器配置");
 
         builder.comment("出生点附近禁止生成女仆的半径");
-        SPAWN_PROTECT_RANGE = builder.defineInRange("Spawn Protect Range", 1000, 0, Integer.MAX_VALUE);
+        SPAWN_PROTECT_RANGE = builder.defineInRange("Spawn_Protect_Range", 1000, 0, Integer.MAX_VALUE);
 
         builder.comment("近战女仆生成权重");
         ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("Attack_Lost_Maid_Spawn_Weight",100,1,Integer.MAX_VALUE);
