@@ -1,6 +1,8 @@
 package com.github.qichensn.event;
 
 import com.github.qichensn.TouhouLostMaid;
+import com.github.qichensn.config.ServerConfig;
+import com.github.qichensn.util.BlockPosUtil;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitEntities;
 import net.minecraft.core.BlockPos;
@@ -26,17 +28,28 @@ public class LostMaidSpawnEvent {
     }
 
 
- /**
- * 自定义迷失女仆生成规则，移除了时间限制（白天/黑夜都可以生成）
- * 只检查方块是否为固体
- */
-private static boolean canLostMaidSpawn(EntityType<EntityMaid> entityMaidEntityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
-    // 检查位置是否在世界边界内
-    if (!serverLevelAccessor.getWorldBorder().isWithinBounds(blockPos)) {
-        return false;
-    }
+    /**
+     * 自定义迷失女仆生成规则
+     */
+    private static boolean canLostMaidSpawn(EntityType<EntityMaid> entityMaidEntityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+        // 检查位置是否在世界边界内
+        if (!serverLevelAccessor.getWorldBorder().isWithinBounds(blockPos)) {
+            return false;
+        }
 
-    // 检查方块是否为固体（可以站立）
-    return serverLevelAccessor.getBlockState(blockPos.below()).isFaceSturdy(serverLevelAccessor, blockPos.below(), net.minecraft.core.Direction.UP);
-}
+        // 检查方块是否为固体（可以站立）
+        if (!serverLevelAccessor.getBlockState(blockPos.below()).isFaceSturdy(serverLevelAccessor, blockPos.below(),
+                net.minecraft.core.Direction.UP)) {
+            return false;
+        }
+
+        // 检查是否在出生点附近, 可在配置中修改检查半径
+        BlockPos spawnPos = serverLevelAccessor.getLevel().getLevelData().getSpawnPos();
+        Integer range = ServerConfig.SPAWN_PROTECT_RANGE.get();
+        if(BlockPosUtil.getDistance(blockPos,spawnPos) <= range) {
+            return false;
+        }
+
+        return true;
+    }
 }

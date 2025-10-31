@@ -7,6 +7,9 @@ public class ServerConfig {
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
+    // 出生点保护半径
+    public static ModConfigSpec.IntValue SPAWN_PROTECT_RANGE;
+
     // 不同类型迷失女仆生成权重
     public static ModConfigSpec.IntValue ATTACK_LOST_MAID_SPAWN_WEIGHT;
     public static ModConfigSpec.IntValue BOW_ATTACK_LOST_MAID_SPAWN_WEIGHT;
@@ -20,6 +23,9 @@ public class ServerConfig {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
         builder.comment("女仆服务器配置");
+
+        builder.comment("出生点附近禁止生成女仆的半径");
+        SPAWN_PROTECT_RANGE = builder.defineInRange("Spawn Protect Range", 1000, 0, Integer.MAX_VALUE);
 
         builder.comment("近战女仆生成权重");
         ATTACK_LOST_MAID_SPAWN_WEIGHT=builder.defineInRange("Attack_Lost_Maid_Spawn_Weight",100,1,Integer.MAX_VALUE);
