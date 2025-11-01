@@ -38,7 +38,6 @@ public class ModMaidDeathEvent {
             TaskManager.findTask(TaskIdle.UID).ifPresent(maid::setTask);
             // 检查是否超过玩家可收服上限，如果超过，设置NOT_DROP_FILM为true，并且阻止生成胶片
             TamedLostMaidCountAttachment tamedCount = player.getData(TAMED_COUNT);
-            TouhouLostMaid.LOGGER.info("测试 {}",tamedCount);
             if(tamedCount.canAdd()){
                tamedCount.add();
             }else {
