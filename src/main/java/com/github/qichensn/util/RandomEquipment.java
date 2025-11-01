@@ -58,29 +58,197 @@ public class RandomEquipment {
     private static List<Holder.Reference<Potion>> NOT_BENEFICIAL_POTION_LIST = null;
 
     public static void init() {
-        getAllWeapons();
-        getAllArmors();
-        getAllGuns();
-        getAllArrows();
+        getAllItemsOnce();
         getAllPotions();
     }
 
-    private static void getAllArrows() {
-        if (ARROW_LIST != null) return;
-        TouhouLostMaid.LOGGER.info("正在构建箭矢缓存...");
+    /**
+     * 一次性遍历所有物品，构建武器、护甲、枪械和箭矢缓存
+     */
+    private static void getAllItemsOnce() {
+        // 如果所有缓存都已初始化，则直接返回
+        if (WEAPON_LIST != null && ARMOR_MATERIALS != null && GUN_LIST != null && ARROW_LIST != null) {
+            return;
+        }
+
+        // 兼容女仆工具类加载（枪械检测需要）
+        if (!SWarfareCompat.isInstalled()) {
+            SWarfareCompat.init();
+        }
+
+        TouhouLostMaid.LOGGER.info("正在构建装备缓存（武器、护甲、枪械、箭矢）...");
+
+        // 初始化各种列表和映射
+        List<Item> weaponList = new ArrayList<>();
+        List<Item> gunList = new ArrayList<>();
         List<Item> arrowList = new ArrayList<>();
+        Map<String, Map<EquipmentSlot, Item>> armorMaterials = new HashMap<>();
+
+        // 护甲类型到装备槽位的映射
+        Map<String, EquipmentSlot> typeToSlot = createArmorTypeMapping();
+
+        // 只遍历一次所有物品
         for (Item item : BuiltInRegistries.ITEM) {
-            // 使用 instanceof 检查是否为箭矢类型
-            if (item instanceof ArrowItem) {
-                // 检查黑名单
-                if(isEquipmentBannedItem(item)) continue;
-                arrowList.add(item);
-                TouhouLostMaid.LOGGER.info("已将{}加入箭矢缓存列表",
-                        item.getName(item.getDefaultInstance()));
+            boolean isBanned = isEquipmentBannedItem(item);
+
+            // 处理各类物品
+            processArrow(item, isBanned, arrowList);
+            processGun(item, isBanned, gunList);
+
+            // 黑名单物品跳过武器和护甲检测
+            if (isBanned) {
+                continue;
+            }
+
+            // 获取物品属性修饰符（武器和护甲都需要）
+            ItemAttributeModifiers modifiers = item.getDefaultInstance().getAttributeModifiers();
+            processWeapon(item, modifiers, weaponList);
+            processArmor(item, modifiers, typeToSlot, armorMaterials);
+        }
+
+        // 构建完整护甲套装列表
+        List<String> completeMaterials = buildCompleteMaterials(armorMaterials);
+
+        // 将结果设置为不可修改的集合并缓存
+        cacheResults(weaponList, gunList, arrowList, armorMaterials, completeMaterials);
+
+        // 输出统计信息
+        logStatistics();
+    }
+
+    /**
+     * 创建护甲类型到装备槽位的映射
+     */
+    private static Map<String, EquipmentSlot> createArmorTypeMapping() {
+        Map<String, EquipmentSlot> typeToSlot = new HashMap<>();
+        typeToSlot.put("helmet", EquipmentSlot.HEAD);
+        typeToSlot.put("chestplate", EquipmentSlot.CHEST);
+        typeToSlot.put("leggings", EquipmentSlot.LEGS);
+        typeToSlot.put("boots", EquipmentSlot.FEET);
+        return typeToSlot;
+    }
+
+    /**
+     * 处理箭矢物品
+     */
+    private static void processArrow(Item item, boolean isBanned, List<Item> arrowList) {
+        if (item instanceof ArrowItem && !isBanned) {
+            arrowList.add(item);
+            TouhouLostMaid.LOGGER.info("已将{}加入箭矢缓存列表",
+                    item.getName(item.getDefaultInstance()));
+        }
+    }
+
+    /**
+     * 处理枪械物品
+     */
+    private static void processGun(Item item, boolean isBanned, List<Item> gunList) {
+        if (GunCommonUtil.isGun(item.getDefaultInstance()) && !isBanned) {
+            gunList.add(item);
+            TouhouLostMaid.LOGGER.info("已将{}加入枪械缓存列表",
+                    item.getName(item.getDefaultInstance()));
+        }
+    }
+
+    /**
+     * 处理武器物品
+     */
+    private static void processWeapon(Item item, ItemAttributeModifiers modifiers, List<Item> weaponList) {
+        for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
+            if (entry.attribute().equals(Attributes.ATTACK_DAMAGE)) {
+                AttributeModifier modifier = entry.modifier();
+                if (modifier.amount() > 2 && entry.slot().test(EquipmentSlot.MAINHAND)) {
+                    weaponList.add(item);
+                    TouhouLostMaid.LOGGER.info("已将{}加入武器缓存列表",
+                            item.getName(item.getDefaultInstance()));
+                    break; // 已识别为武器，跳出属性循环
+                }
             }
         }
+    }
+
+    /**
+     * 处理护甲物品
+     */
+    private static void processArmor(Item item, ItemAttributeModifiers modifiers,
+                                     Map<String, EquipmentSlot> typeToSlot,
+                                     Map<String, Map<EquipmentSlot, Item>> armorMaterials) {
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
+        if (key == null) {
+            return;
+        }
+
+        String path = key.getPath();
+        String[] parts = path.split("_");
+        if (parts.length < 2) {
+            return;
+        }
+
+        String material = parts[0];
+        String type = parts[parts.length - 1];
+        EquipmentSlot expectedSlot = typeToSlot.get(type);
+        if (expectedSlot == null) {
+            return;
+        }
+
+        // 检查是否有护甲属性
+        if (hasArmorAttribute(modifiers, expectedSlot)) {
+            armorMaterials.computeIfAbsent(material, k -> new HashMap<>()).put(expectedSlot, item);
+            TouhouLostMaid.LOGGER.info("已将{}加入护甲套装缓存（材料：{}，部位：{}）",
+                    item.getName(item.getDefaultInstance()), material, expectedSlot);
+        }
+    }
+
+    /**
+     * 检查物品是否有护甲属性
+     */
+    private static boolean hasArmorAttribute(ItemAttributeModifiers modifiers, EquipmentSlot expectedSlot) {
+        for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
+            if (entry.attribute().equals(Attributes.ARMOR)) {
+                AttributeModifier modifier = entry.modifier();
+                if (modifier.amount() > 0 && entry.slot().test(expectedSlot)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 构建完整护甲套装列表
+     */
+    private static List<String> buildCompleteMaterials(Map<String, Map<EquipmentSlot, Item>> armorMaterials) {
+        List<String> completeMaterials = new ArrayList<>();
+        for (Map.Entry<String, Map<EquipmentSlot, Item>> entry : armorMaterials.entrySet()) {
+            if (entry.getValue().size() == 4) {
+                completeMaterials.add(entry.getKey());
+            }
+        }
+        return completeMaterials;
+    }
+
+    /**
+     * 缓存处理结果
+     */
+    private static void cacheResults(List<Item> weaponList, List<Item> gunList, List<Item> arrowList,
+                                     Map<String, Map<EquipmentSlot, Item>> armorMaterials,
+                                     List<String> completeMaterials) {
+        WEAPON_LIST = Collections.unmodifiableList(weaponList);
+        GUN_LIST = Collections.unmodifiableList(gunList);
         ARROW_LIST = Collections.unmodifiableList(arrowList);
-        TouhouLostMaid.LOGGER.info("箭矢缓存构建完毕，共找到 {} 种箭矢。", ARROW_LIST.size());
+        ARMOR_MATERIALS = Collections.unmodifiableMap(armorMaterials);
+        COMPLETE_MATERIALS = Collections.unmodifiableList(completeMaterials);
+    }
+
+    /**
+     * 输出统计信息
+     */
+    private static void logStatistics() {
+        TouhouLostMaid.LOGGER.info("装备缓存构建完毕：");
+        TouhouLostMaid.LOGGER.info("  - 武器: {} 种", WEAPON_LIST.size());
+        TouhouLostMaid.LOGGER.info("  - 枪械: {} 种", GUN_LIST.size());
+        TouhouLostMaid.LOGGER.info("  - 箭矢: {} 种", ARROW_LIST.size());
+        TouhouLostMaid.LOGGER.info("  - 完整护甲套装: {} 种", COMPLETE_MATERIALS.size());
     }
 
     /**
@@ -144,110 +312,6 @@ public class RandomEquipment {
         TouhouLostMaid.LOGGER.info("非增益药水效果缓存构建完毕，共找到 {} 种非增益药水效果。", NOT_BENEFICIAL_POTION_LIST.size());
     }
 
-    private static void getAllGuns() {
-        // 兼容女仆工具类加载
-        // 已确保此方法被调用时一定加载了卓越前线mod
-        // 并且此方法在FML加载阶段调用
-        if(!SWarfareCompat.isInstalled()){
-            SWarfareCompat.init();
-        }
-        if(GUN_LIST!=null) return;
-        TouhouLostMaid.LOGGER.info("正在构建枪械缓存...");
-        List<Item> gunList = new ArrayList<>();
-        for (Item item : BuiltInRegistries.ITEM){
-            if(GunCommonUtil.isGun(item.getDefaultInstance())){
-                // 黑名单
-                if(isEquipmentBannedItem(item)) continue;
-                gunList.add(item);
-                TouhouLostMaid.LOGGER.info("已将{}加入枪械缓存列表",
-                        item.getName(item.getDefaultInstance()));
-            }
-        }
-        GUN_LIST = Collections.unmodifiableList(gunList);
-        TouhouLostMaid.LOGGER.info("枪械缓存构建完毕，共找到 {} 种枪械。", GUN_LIST.size());
-    }
-
-    private static void getAllWeapons() {
-        if(WEAPON_LIST!=null)return;
-        TouhouLostMaid.LOGGER.info("正在构建武器缓存...");
-        List<Item> weaponList = new ArrayList<>();
-        for (Item item : BuiltInRegistries.ITEM) {
-            // 黑名单
-            if(isEquipmentBannedItem(item)) continue;
-            ItemAttributeModifiers modifiers = item.getDefaultInstance().getAttributeModifiers();
-            for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-                // 根据攻击伤害选择
-                // 要求攻击伤害大于2
-                if (entry.attribute().equals(Attributes.ATTACK_DAMAGE)) {
-                    AttributeModifier modifier = entry.modifier();
-                    if (modifier.amount() > 2) {
-                        boolean appliesToWeaponSlot = entry.slot().test(EquipmentSlot.MAINHAND);
-                        if (appliesToWeaponSlot) {
-                            weaponList.add(item);
-                            TouhouLostMaid.LOGGER.info("已将{}加入武器缓存列表",
-                                    item.getName(item.getDefaultInstance()));
-                        }
-                    }
-                }
-            }
-
-        }
-        WEAPON_LIST = Collections.unmodifiableList(weaponList);
-        TouhouLostMaid.LOGGER.info("武器缓存构建完毕，共找到 {} 种武器。", WEAPON_LIST.size());
-    }
-
-    private static void getAllArmors() {
-        if (ARMOR_MATERIALS != null) return;
-        TouhouLostMaid.LOGGER.info("正在构建护甲套装缓存...");
-        Map<String, Map<EquipmentSlot, Item>> armorMaterials = new HashMap<>();
-        Map<String, EquipmentSlot> typeToSlot = new HashMap<>();
-        typeToSlot.put("helmet", EquipmentSlot.HEAD);
-        typeToSlot.put("chestplate", EquipmentSlot.CHEST);
-        typeToSlot.put("leggings", EquipmentSlot.LEGS);
-        typeToSlot.put("boots", EquipmentSlot.FEET);
-
-        for (Item item : BuiltInRegistries.ITEM) {
-            // 黑名单
-            if(isEquipmentBannedItem(item)) continue;
-            ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
-            if (key == null) continue;
-            String path = key.getPath();
-            String[] parts = path.split("_");
-            if (parts.length < 2) continue;
-            String material = parts[0];
-            String type = parts[parts.length - 1];
-            EquipmentSlot expectedSlot = typeToSlot.get(type);
-            if (expectedSlot == null) continue;
-
-            ItemAttributeModifiers modifiers = item.getDefaultInstance().getAttributeModifiers();
-            boolean hasArmor = false;
-            for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-                if (entry.attribute().equals(Attributes.ARMOR)) {
-                    AttributeModifier modifier = entry.modifier();
-                    if (modifier.amount() > 0 && entry.slot().test(expectedSlot)) {
-                        hasArmor = true;
-                        break;
-                    }
-                }
-            }
-            if (hasArmor) {
-                armorMaterials.computeIfAbsent(material, k -> new HashMap<>()).put(expectedSlot, item);
-                TouhouLostMaid.LOGGER.info("已将{}加入护甲套装缓存（材料：{}，部位：{}）",
-                        item.getName(item.getDefaultInstance()), material, expectedSlot);
-            }
-        }
-
-        List<String> completeMaterials = new ArrayList<>();
-        for (Map.Entry<String, Map<EquipmentSlot, Item>> entry : armorMaterials.entrySet()) {
-            if (entry.getValue().size() == 4) {
-                completeMaterials.add(entry.getKey());
-            }
-        }
-
-        ARMOR_MATERIALS = Collections.unmodifiableMap(armorMaterials);
-        COMPLETE_MATERIALS = Collections.unmodifiableList(completeMaterials);
-        TouhouLostMaid.LOGGER.info("护甲套装缓存构建完毕，共找到 {} 种完整套装。", COMPLETE_MATERIALS.size());
-    }
 
     /**
      * 从游戏中所有武器中随机获取一个。
