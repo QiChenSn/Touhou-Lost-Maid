@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 public class LostMaidData implements ILittleMaid {
     public static TaskDataKey<Boolean> IS_LOST_MAID;
     public static TaskDataKey<LostMaidType> LOST_MAID_TYPE;
+    public static TaskDataKey<Boolean> NOT_DROP_FILM;
     @Override
     public void registerTaskData(TaskDataRegister register) {
         IS_LOST_MAID = register.register(
@@ -21,6 +22,10 @@ public class LostMaidData implements ILittleMaid {
         LOST_MAID_TYPE=register.register(
                 ResourceLocation.fromNamespaceAndPath(TouhouLostMaid.MODID, "lost_maid_type"),
                 LostMaidType.CODEC.fieldOf("value").codec()// 依旧包装...
+        );
+        NOT_DROP_FILM = register.register(
+                ResourceLocation.fromNamespaceAndPath(TouhouLostMaid.MODID, "not_drop_film"),
+                Codec.BOOL.fieldOf("value").codec()  // 将布尔值包装在字段中
         );
     }
 }
