@@ -64,6 +64,11 @@ public class BowAttackPlayerTask implements IRangedAttackTask {
         return MaidTaskRegister.canAttack(maid, target);
     }
 
+    @Override
+    public boolean isEnable(EntityMaid maid) {
+        return maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false);
+    }
+
     @Nullable
     @Override
     public SoundEvent getAmbientSound(EntityMaid maid) {

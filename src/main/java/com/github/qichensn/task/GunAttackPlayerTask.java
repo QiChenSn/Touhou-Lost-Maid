@@ -1,6 +1,7 @@
 package com.github.qichensn.task;
 
 import com.github.qichensn.TouhouLostMaid;
+import com.github.qichensn.data.LostMaidData;
 import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.task.IRangedAttackTask;
 import com.github.tartaricacid.touhoulittlemaid.compat.gun.common.GunCommonUtil;
@@ -49,6 +50,11 @@ public class GunAttackPlayerTask implements IRangedAttackTask {
     @Override
     public boolean canAttack(EntityMaid maid, LivingEntity target) {
         return MaidTaskRegister.canAttack(maid, target);
+    }
+
+    @Override
+    public boolean isEnable(EntityMaid maid) {
+        return maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false);
     }
 
     @Nullable
