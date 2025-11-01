@@ -1,6 +1,7 @@
 package com.github.qichensn;
 
 import com.github.qichensn.config.ServerConfig;
+import com.github.qichensn.data.ModDataAttachment;
 import com.github.qichensn.util.RandomEquipment;
 import org.slf4j.Logger;
 
@@ -43,6 +44,6 @@ public class TouhouLostMaid {
 
     public TouhouLostMaid(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
+        ModDataAttachment.ATTACHMENT_TYPES.register(modEventBus);
     }
-
 }
