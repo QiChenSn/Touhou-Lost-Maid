@@ -1,6 +1,7 @@
 package com.github.qichensn.event;
 
 import com.atsuishio.superbwarfare.init.ModItems;
+import com.github.qichensn.TouhouLostMaid;
 import com.github.qichensn.data.LostMaidData;
 import com.github.qichensn.data.LostMaidType;
 import com.github.qichensn.task.AttackPlayerTask;
@@ -16,16 +17,24 @@ import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.Map;
 
 import static com.github.qichensn.util.RandomEquipment.getRandomWeapon;
+import static com.github.tartaricacid.touhoulittlemaid.util.ItemsUtil.findStackSlot;
 
 @EventBusSubscriber
 public class ModEntityJoinLevelEvent {
     @SubscribeEvent
     public static void markLostMaid(EntityJoinLevelEvent event){
         if (event.getEntity() instanceof EntityMaid maid && !event.getLevel().isClientSide()) {
+            // 不对背包非空的女仆进行任何操作
+            // 防止重复刷新女仆
+            ItemStackHandler maidInv = maid.getMaidInv();
+            if(findStackSlot(maidInv,(stack)-> stack instanceof ItemStack)>=0){
+                return;
+            }
 
             // 检查生成类型：判断条件改为:
             // 1.没有主人
