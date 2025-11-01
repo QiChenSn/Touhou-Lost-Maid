@@ -30,7 +30,7 @@ public class ModMaidDeathEvent {
                 return;
             }
             maid.setOwnerUUID(player.getUUID());
-            maid.setData(LostMaidData.IS_LOST_MAID,true);
+            maid.setData(LostMaidData.IS_LOST_MAID,false);
             // 设置task
             TaskManager.findTask(TaskIdle.UID).ifPresent(maid::setTask);
         }
