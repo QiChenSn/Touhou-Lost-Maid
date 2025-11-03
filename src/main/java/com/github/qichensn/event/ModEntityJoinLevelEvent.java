@@ -32,7 +32,7 @@ public class ModEntityJoinLevelEvent {
             // 不对背包非空的女仆进行任何操作
             // 防止重复刷新女仆
             ItemStackHandler maidInv = maid.getMaidInv();
-            if(findStackSlot(maidInv,(stack)-> stack instanceof ItemStack)>=0){
+            if(maidInv.getSlots()>0){
                 return;
             }
 
