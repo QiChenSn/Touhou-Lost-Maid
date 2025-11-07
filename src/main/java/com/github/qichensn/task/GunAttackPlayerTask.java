@@ -53,6 +53,11 @@ public class GunAttackPlayerTask implements IRangedAttackTask {
     }
 
     @Override
+    public boolean isHidden(EntityMaid maid) {
+        return true;
+    }
+
+    @Override
     public boolean isEnable(EntityMaid maid) {
         return maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false);
     }

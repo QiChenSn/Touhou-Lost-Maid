@@ -47,6 +47,11 @@ public class AttackPlayerTask implements IAttackTask {
     }
 
     @Override
+    public boolean isHidden(EntityMaid maid) {
+        return true;
+    }
+
+    @Override
     public @Nullable SoundEvent getAmbientSound(EntityMaid entityMaid) {
         return null;
     }
