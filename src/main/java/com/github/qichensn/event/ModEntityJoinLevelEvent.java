@@ -31,11 +31,29 @@ public class ModEntityJoinLevelEvent {
         if (event.getEntity() instanceof EntityMaid maid && !event.getLevel().isClientSide()) {
             // 不对背包非空的女仆进行任何操作
             // 防止重复刷新女仆
+            // 判断背包和装备栏是否都为空
+            boolean isEmpty = true;
+
+            // 检查基础背包
             ItemStackHandler maidInv = maid.getMaidInv();
-            if(maidInv.getSlots()>0){
-                return;
+            for(int i = 0; i < maidInv.getSlots(); i++){
+                if(!maidInv.getStackInSlot(i).isEmpty()){
+                    isEmpty = false;
+                    break;
+                }
             }
 
+            // 检查装备栏（主手、副手、头盔、胸甲、护腿、鞋子）
+            if(isEmpty) {
+                for(EquipmentSlot slot : EquipmentSlot.values()) {
+                    if(!maid.getItemBySlot(slot).isEmpty()) {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+            }
+
+            if(!isEmpty) return;
             // 检查生成类型：判断条件改为:
             // 1.没有主人
             // 2.非结构生成
