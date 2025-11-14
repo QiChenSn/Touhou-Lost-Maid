@@ -2,7 +2,9 @@ package com.github.qichensn;
 
 import com.github.qichensn.config.ServerConfig;
 import com.github.qichensn.data.ModDataAttachment;
+import com.github.qichensn.network.ModNetworkHandler;
 import com.github.qichensn.util.RandomEquipment;
+import com.github.tartaricacid.touhoulittlemaid.network.NetworkHandler;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -43,6 +45,7 @@ public class TouhouLostMaid {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public TouhouLostMaid(IEventBus modEventBus, ModContainer modContainer) {
+        modEventBus.addListener(ModNetworkHandler::registerPacket);
         modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.init());
         ModDataAttachment.ATTACHMENT_TYPES.register(modEventBus);
     }

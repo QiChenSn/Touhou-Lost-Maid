@@ -35,6 +35,9 @@ public class ServerConfig {
     // 可驯服迷失女仆数量
     public static ModConfigSpec.IntValue CAN_TAME_COUNT;
 
+    // 女仆模型白名单
+    public static ModConfigSpec.ConfigValue<List<String>> MODEL_WHITE_LIST;
+
     public static ModConfigSpec init(){
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -70,6 +73,10 @@ public class ServerConfig {
 
         builder.comment("可以通过驯服的迷失女仆的最大数量");
         CAN_TAME_COUNT = builder.defineInRange("can_tame_count",5,0,Integer.MAX_VALUE);
+
+        builder.comment("女仆模型白名单");
+        builder.comment("说明: 填入模型名，例如: [\"geckolib:winefox\", \"geckolib:winefox_blue\"]");
+        MODEL_WHITE_LIST = builder.define("model_white_list", Lists.newArrayList());
 
         return builder.build();
     }

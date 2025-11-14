@@ -2,11 +2,13 @@ package com.github.qichensn.event;
 
 import com.atsuishio.superbwarfare.init.ModItems;
 import com.github.qichensn.TouhouLostMaid;
+import com.github.qichensn.config.ServerConfig;
 import com.github.qichensn.data.LostMaidData;
 import com.github.qichensn.data.LostMaidType;
 import com.github.qichensn.task.AttackPlayerTask;
 import com.github.qichensn.task.BowAttackPlayerTask;
 import com.github.qichensn.task.GunAttackPlayerTask;
+import com.github.qichensn.util.MaidModelUtil;
 import com.github.qichensn.util.RandomEquipment;
 import com.github.tartaricacid.touhoulittlemaid.entity.ai.brain.MaidSchedule;
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
@@ -19,6 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.github.qichensn.util.RandomEquipment.getRandomWeapon;
@@ -66,7 +69,7 @@ public class ModEntityJoinLevelEvent {
                 maid.setData(LostMaidData.IS_LOST_MAID, true);
 
                 setMaidType(maid);
-
+                changeRandomModel(maid);
             } else {
                 maid.setData(LostMaidData.IS_LOST_MAID, false);
             }
@@ -132,5 +135,16 @@ public class ModEntityJoinLevelEvent {
         maid.setItemSlot(EquipmentSlot.CHEST, randomArmorSet.get(EquipmentSlot.CHEST));
         maid.setItemSlot(EquipmentSlot.LEGS, randomArmorSet.get(EquipmentSlot.LEGS));
         maid.setItemSlot(EquipmentSlot.FEET, randomArmorSet.get(EquipmentSlot.FEET));
+    }
+
+    public static void changeRandomModel(EntityMaid maid){
+        if(!maid.getOrCreateData(LostMaidData.IS_LOST_MAID,false))return; // 判断是否为迷失女仆
+
+        List<String> modelList = ServerConfig.MODEL_WHITE_LIST.get();
+        if (modelList.isEmpty()) return;
+
+        String randomModelId = modelList.get(maid.getRandom().nextInt(modelList.size()));
+        MaidModelUtil.notifyModelChange(maid, randomModelId);
+        TouhouLostMaid.LOGGER.info("修改模型：Lost Maid {} change model to {}", maid.getId(), randomModelId);
     }
 }
