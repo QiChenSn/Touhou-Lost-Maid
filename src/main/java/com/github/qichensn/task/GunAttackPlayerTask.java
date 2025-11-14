@@ -130,7 +130,8 @@ public class GunAttackPlayerTask implements IRangedAttackTask {
 
     @Override
     public boolean canSee(EntityMaid maid, LivingEntity target) {
-        return true;
+        return GunCommonUtil.canSee(maid, target)
+                .orElseGet(() -> IRangedAttackTask.super.canSee(maid, target));
     }
 
     @Override

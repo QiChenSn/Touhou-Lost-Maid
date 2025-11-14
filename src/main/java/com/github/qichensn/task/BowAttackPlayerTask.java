@@ -140,8 +140,7 @@ public class BowAttackPlayerTask implements IRangedAttackTask {
 
     @Override
     public boolean canSee(EntityMaid maid, LivingEntity target) {
-        // 确保目标只有玩家,无所谓能不能看到
-        return true;
+        return IRangedAttackTask.targetConditionsTest(maid, target, MaidConfig.BOW_RANGE);
     }
 
     @Override
