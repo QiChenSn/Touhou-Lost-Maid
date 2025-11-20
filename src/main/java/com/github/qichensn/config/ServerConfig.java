@@ -64,11 +64,11 @@ public class ServerConfig {
         builder.comment("说明: 正面效果可对玩家(刻意为之)和女仆生效, 负面效果只对玩家生效");
         BENEFIT_ARROW_CHANCE=builder.defineInRange("benefit_arrow_chance",0.2,0,1);
 
-        builder.comment("女仆掉落物黑名单配置");
-        builder.comment("说明: 填入物品的注册名，例如: [\"minecraft:diamond\", \"minecraft:enchanted_golden_apple\"]");
+        builder.comment("女仆掉落物黑名单配置，支持正则表达式");
+        builder.comment("说明: 填入物品的注册名，例如: [\"minecraft:diamond\", \"minecraft:enchanted_golden_apple\", \"^minecraft:.+$\"]");
         BANNED_ITEMS = builder.define("banned_items", Lists.newArrayList());
 
-        builder.comment("女仆装备黑名单配置");
+        builder.comment("女仆装备黑名单配置，支持正则表达式");
         EQUIPMENT_BANNED_ITEMS = builder.define("equipment_banned_items", Lists.newArrayList());
 
         builder.comment("可以通过驯服的迷失女仆的最大数量");
