@@ -11,8 +11,8 @@ public class ModNetworkHandler {
     public static void registerPacket(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(VERSION).optional();
 
-        registrar.playToServer(ModMaidModelPackage.TYPE, ModMaidModelPackage.STREAM_CODEC, ModMaidModelPackage::handle);
-        registrar.playToServer(ModSetMaidSoundIdPackage.TYPE, ModSetMaidSoundIdPackage.STREAM_CODEC,
-                ModSetMaidSoundIdPackage::handle);
+//        registrar.playToServer(ModMaidModelPackage.TYPE, ModMaidModelPackage.STREAM_CODEC, ModMaidModelPackage::handle);
+//        registrar.playToServer(ModSetMaidSoundIdPackage.TYPE, ModSetMaidSoundIdPackage.STREAM_CODEC,
+//                ModSetMaidSoundIdPackage::handle);
     }
 }

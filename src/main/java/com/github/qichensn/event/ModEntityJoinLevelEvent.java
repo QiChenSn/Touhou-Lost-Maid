@@ -69,7 +69,7 @@ public class ModEntityJoinLevelEvent {
                 maid.setData(LostMaidData.IS_LOST_MAID, true);
 
                 setMaidType(maid);
-                changeRandomModel(maid);
+                // changeRandomModel(maid);
             } else {
                 maid.setData(LostMaidData.IS_LOST_MAID, false);
             }
