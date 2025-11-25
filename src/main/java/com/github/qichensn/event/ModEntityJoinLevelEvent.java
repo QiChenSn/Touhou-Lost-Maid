@@ -106,7 +106,10 @@ public class ModEntityJoinLevelEvent {
     private static void setGunAttackMaid(EntityMaid maid) {
         maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.GUN_ATTACK);
         TaskManager.findTask(GunAttackPlayerTask.UID).ifPresent(maid::setTask);
-        maid.setItemSlot(EquipmentSlot.MAINHAND, RandomEquipment.getRandomGun());
+        ItemStack gun = RandomEquipment.getRandomGun();
+        if (!gun.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.MAINHAND, gun);
+        }
         // 需要处理此物品 防止被玩家获取到
         maid.setItemSlot(EquipmentSlot.OFFHAND, ModItems.CREATIVE_AMMO_BOX.get().getDefaultInstance());
     }
@@ -114,9 +117,15 @@ public class ModEntityJoinLevelEvent {
     private static void setBowAttackMaid(EntityMaid maid) {
         maid.setData(LostMaidData.LOST_MAID_TYPE, LostMaidType.BOW_ATTACK);
         TaskManager.findTask(BowAttackPlayerTask.UID).ifPresent(maid::setTask);
-        maid.setItemSlot(EquipmentSlot.MAINHAND, Items.BOW.getDefaultInstance());
+        ItemStack bow = Items.BOW.getDefaultInstance();
+        if (!bow.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.MAINHAND, bow);
+        }
         // 开局一只箭 后续全靠刷
-        maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.ARROW,1));
+        ItemStack arrow = new ItemStack(Items.ARROW, 1);
+        if (!arrow.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.OFFHAND, arrow);
+        }
     }
 
 
@@ -126,15 +135,30 @@ public class ModEntityJoinLevelEvent {
         // 设置task
         TaskManager.findTask(AttackPlayerTask.UID).ifPresent(maid::setTask);
         // 添加武器到主手
-        maid.setItemSlot(EquipmentSlot.MAINHAND, getRandomWeapon());
+        ItemStack weapon = getRandomWeapon();
+        if (!weapon.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+        }
         // 添加盾牌到副手
         maid.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
         // 添加护甲
         Map<EquipmentSlot, ItemStack> randomArmorSet = RandomEquipment.getRandomArmorSet();
-        maid.setItemSlot(EquipmentSlot.HEAD, randomArmorSet.get(EquipmentSlot.HEAD));
-        maid.setItemSlot(EquipmentSlot.CHEST, randomArmorSet.get(EquipmentSlot.CHEST));
-        maid.setItemSlot(EquipmentSlot.LEGS, randomArmorSet.get(EquipmentSlot.LEGS));
-        maid.setItemSlot(EquipmentSlot.FEET, randomArmorSet.get(EquipmentSlot.FEET));
+        ItemStack headArmor = randomArmorSet.get(EquipmentSlot.HEAD);
+        if (headArmor != null && !headArmor.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.HEAD, headArmor);
+        }
+        ItemStack chestArmor = randomArmorSet.get(EquipmentSlot.CHEST);
+        if (chestArmor != null && !chestArmor.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.CHEST, chestArmor);
+        }
+        ItemStack legsArmor = randomArmorSet.get(EquipmentSlot.LEGS);
+        if (legsArmor != null && !legsArmor.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.LEGS, legsArmor);
+        }
+        ItemStack feetArmor = randomArmorSet.get(EquipmentSlot.FEET);
+        if (feetArmor != null && !feetArmor.isEmpty()) {
+            maid.setItemSlot(EquipmentSlot.FEET, feetArmor);
+        }
     }
 
     public static void changeRandomModel(EntityMaid maid){
